@@ -2,6 +2,7 @@ package com.bignerdranch.android.geoquiz;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,9 @@ public class QuizActivity extends AppCompatActivity {
     private ImageButton mPrevButton;
     private TextView mQuestionTextView;
 
+    private static final String TAG = "QuizActivity";
+    private static final String KEY_INDEX = "index";
+
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_oceans,true),
             new Question(R.string.question_mideast,false),
@@ -29,8 +33,16 @@ public class QuizActivity extends AppCompatActivity {
     private int mCurrentIndex = 0;
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG,"onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG,"onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -79,6 +91,11 @@ public class QuizActivity extends AppCompatActivity {
                 updateQuestion();
             }
         });
+
+        if(savedInstanceState != null){
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
+        }
+
         updateQuestion();
     }
 
@@ -96,7 +113,35 @@ public class QuizActivity extends AppCompatActivity {
         Toast.makeText(this,messageResId,Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.d(TAG, "OnStart() called");
+    }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.d(TAG, "OnPause() called");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG, "OnResume() called");
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d(TAG, "OnStop() called");
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onPause();
+        Log.d(TAG, "OnDestroy() called");
+    }
 
     private void updateQuestion(){
         int question = mQuestionBank[mCurrentIndex].getTextResId();
