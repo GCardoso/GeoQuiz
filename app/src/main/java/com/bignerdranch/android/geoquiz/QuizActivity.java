@@ -25,6 +25,7 @@ public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_DID_CHEAT = "didCheat";
+    private static final String KEY_CHEATED_QUESTIONS = "cheatedQuestions";
     private static final int REQUEST_CODE_CHEAT = 0;
 
     private Question[] mQuestionBank = new Question[]{
@@ -37,13 +38,16 @@ public class QuizActivity extends AppCompatActivity {
 
     private int mCurrentIndex = 0;
     private boolean mIsCheater;
+    private boolean[] mCheatedQuestions = {false,false,false,
+            false,false};
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
-        savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);
-        savedInstanceState.putBoolean(KEY_DID_CHEAT,mIsCheater);
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putBoolean(KEY_DID_CHEAT, mIsCheater);
+        savedInstanceState.putBooleanArray(KEY_CHEATED_QUESTIONS, mCheatedQuestions);
     }
 
     @Override
@@ -107,6 +111,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v){
                 //Start CheatActivity
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+                mCheatedQuestions[mCurrentIndex] = true;
                 Intent i = CheatActivity.newIntent(QuizActivity.this,answerIsTrue);
                 startActivityForResult(i,REQUEST_CODE_CHEAT);
             }
@@ -114,7 +119,8 @@ public class QuizActivity extends AppCompatActivity {
 
         if(savedInstanceState != null){
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
-            mIsCheater = savedInstanceState.getBoolean(KEY_DID_CHEAT); 
+            mIsCheater = savedInstanceState.getBoolean(KEY_DID_CHEAT);
+            mCheatedQuestions = savedInstanceState.getBooleanArray(KEY_CHEATED_QUESTIONS);
         }
 
         updateQuestion();
@@ -126,7 +132,7 @@ public class QuizActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
-        if (mIsCheater){
+        if (mIsCheater || mCheatedQuestions[mCurrentIndex]){
             messageResId = R.string.judgment_toast;
         }else{
             if (userPressedTrue == answerIsTrue){
