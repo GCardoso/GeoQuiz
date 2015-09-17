@@ -26,6 +26,7 @@ public class CheatActivity extends AppCompatActivity {
     private boolean didCheat;
 
     private TextView mAnswerTextView;
+    private TextView mAPILevelTextView;
     private Button mShowAnswer;
 
     public void onSaveInstanceState(Bundle savedInstanceState){
@@ -47,6 +48,9 @@ public class CheatActivity extends AppCompatActivity {
 
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE,false);
         mAnswerTextView = (TextView) findViewById(R.id.answerTextView);
+
+        mAPILevelTextView = (TextView) findViewById(R.id.apiLevel);
+        mAPILevelTextView.setText("API Level " + String.valueOf(Build.VERSION.SDK_INT));
 
         if (savedInstanceState != null){
             didCheat = savedInstanceState.getBoolean(KEY_DID_IT_CHEAT);
